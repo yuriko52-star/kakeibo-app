@@ -12,7 +12,11 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        //
+        $categories = Category::where('user_id',auth()->id())
+            ->latest()
+            ->paginate(5);
+            // 10にするかも
+            return view('categories.index',compact('categories'));
     }
 
     /**
@@ -20,7 +24,7 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        //
+        return view('categories.create');
     }
 
     /**
@@ -28,7 +32,13 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // あとでバリデーション追加する予定
+        Category::create([
+            'user_id' => auth()->id(),
+            'name' => $request->name,
+            'type' => $request->type,
+        ]);
+        return redirect()->route('categories.index')->with('success','カテゴリを作成しました');
     }
 
     /**
@@ -36,7 +46,7 @@ class CategoryController extends Controller
      */
     public function show(Category $category)
     {
-        //
+        abort(404);
     }
 
     /**
@@ -44,7 +54,10 @@ class CategoryController extends Controller
      */
     public function edit(Category $category)
     {
-        //
+        if($category->user_id !== auth()->id()) {
+            abort(403);
+        }
+        return view('categories.edit',compact('category'));
     }
 
     /**
@@ -52,7 +65,15 @@ class CategoryController extends Controller
      */
     public function update(Request $request, Category $category)
     {
-        //
+        if($category->user_id !== auth()->id()) {
+            abort(403);
+        }
+        // あとでバリデーションをやる予定
+        $category->update([
+            'name' => $request->name,
+            'type' => $request->type,
+        ]);
+        return redirect()->route('categories.index')->with('success','カテゴリを更新しました');
     }
 
     /**
@@ -60,6 +81,10 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        //
+        if($category->user_id !== auth()->id()) {
+            abort(403);
+        }
+        $category->delete();
+        return redirect()->route('categories.index')->with('success','カテゴリを削除しました。');
     }
 }

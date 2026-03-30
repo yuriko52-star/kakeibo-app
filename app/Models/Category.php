@@ -17,7 +17,7 @@ class Category extends Model
 
     public function user()
     {
-        return $this->belingsTo(User::class);
+        return $this->belongsTo(User::class);
     }
 
     public function transactions()
