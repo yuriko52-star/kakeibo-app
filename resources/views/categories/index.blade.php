@@ -27,22 +27,38 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- あとでforelseに直す -->
-                    @foreach($categories as $category )
+                    
+                    @forelse ($categories as $category )
                     <tr class="border-b">
                         <td class="py-2">{{ $category->name }}</td>
                         <td class="py-2">
                             {{ $category->type === 'income' ? '収入' : '支出' }}
                         </td>
-                        <!-- 編集リンクと削除ボタン -->
+                        
                         <td class="py-2 flex gap-2">
-
+                            <a href="{{route('categories.edit', $category)  }}" class="text-blue-600 hover:underline">編集</a>
+                            <form action="{{ route('categories.destroy', $category)  }}" method="POST" onsubmit="return confirm('削除してもよろしいですか？');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit"class="text-red-600 hover:underline">
+                                    削除
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="3" class="py-4 text-gray-500">
+                            カテゴリがまだありません。
                         </td>
                     </tr>
 
-                    @endforeach
+                    @endforelse
                 </tbody>
             </table>
+            <div class="mt-4">
+                {{ $categories->links() }}
+            </div>
         </div>
     </div>
 </x-app-layout>

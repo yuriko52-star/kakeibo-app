@@ -32,7 +32,10 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        // あとでバリデーション追加する予定
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'type' => 'required|in:income,expense',
+        ]);
         Category::create([
             'user_id' => auth()->id(),
             'name' => $request->name,
@@ -68,7 +71,10 @@ class CategoryController extends Controller
         if($category->user_id !== auth()->id()) {
             abort(403);
         }
-        // あとでバリデーションをやる予定
+        $request->validate([
+            'name'=> 'required|string|max:255',
+            'type' => 'required|in:income,expense',
+        ]);
         $category->update([
             'name' => $request->name,
             'type' => $request->type,

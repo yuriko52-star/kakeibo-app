@@ -12,7 +12,9 @@
                 <div class="mb-4">
                     <label class="block mb-1 font-medium">カテゴリ名</label>
                     <input type="text" name="name" value="{{ old('name') }}" class="w-full border rounded px-3 py-2">
-                    <!-- あとでバリデーションをつける -->
+                    @error('name')
+                    <div class="text-red-500 text-sm mt-1">{{$message}}</div>
+                    @enderror
                 </div>
 
                 <div class="mb-4">
@@ -22,7 +24,9 @@
                         <option value="income"{{ old('type')=== 'income' ? 'selected' : '' }}>収入</option>
                         <option value="expense" {{ old('type') === 'expense' ? 'selected' : '' }}>支出</option>
                     </select>
-                    <!-- validation -->
+                    @error('type')
+                    <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
+                    @enderror
                 </div>
 
                 <div class="flex gap-2">
