@@ -1,8 +1,12 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            カテゴリ一覧
-        </h2>
+        <div class="flex justify-between items-center mb-1">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">カテゴリ一覧</h2>
+            <a href="{{ route('transactions.index') }}" class="bg-blue-500 text-white px-4 py-2 rounded">
+                取引一覧へ
+            </a>
+        </div>
+        
     </x-slot>
 
     <div class="py-8 max-w-4xl mx-auto px-4">
