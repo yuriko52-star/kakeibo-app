@@ -6,9 +6,12 @@ return [
     'max' => [
         'string' => '「:attribute」は:max文字以内で入力してください。',
     ],
-    'in' => '「:attribute」」の選択が正しくありません。',
+    'in' => '「:attribute」の選択が正しくありません。',
+    
     'attributes' => [
         'name' => 'カテゴリ名',
+        'category_id' => 'カテゴリ',
         'type' => '種別',
+        'amount' => '金額',
     ],
 ];

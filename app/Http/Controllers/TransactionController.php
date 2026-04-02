@@ -43,6 +43,9 @@ class TransactionController extends Controller
             'amount' => 'required|integer|min:1',
             'memo' => 'nullable|string|max:255',
             'spent_at' => 'required|date',
+        ],[
+            'amount.integer' => '数値で入力してください',
+            'amount.min' => '1以上の数字で入力してください',
         ]);
         $category = Category::findOrFail($request->category_id);
         // 他人のカテゴリを使えないようにする
@@ -108,6 +111,9 @@ class TransactionController extends Controller
             'amount' => 'required|integer|min:1',
             'memo' => 'nullable|string|max:255',
             'spent_at' => 'required|date',
+        ],[
+            'amount.integer' => '数値で入力してください',
+            'amount.min' => '1以上の数字で入力してください',
         ]);
         $category = Category::findOrFail($request->category_id);
 
