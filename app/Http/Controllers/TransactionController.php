@@ -11,13 +11,38 @@ class TransactionController extends Controller
     /**
      * 取引一覧　Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $transactions = Transaction::with('category')
+         // ログインユーザーのデータだけ
+         $query = Transaction::where('user_id',auth()->id());
+          // 種別で絞り込み
+          if($request->filled('type')) {
+            $query->where('type',$request->type);
+          }
+          // 月で絞り込み
+          if($request->filled('month')) {
+            $query->whereMonth('spent_at',$request->month);
+          }
+          // 取得（新しい順）
+          $transactions = $query->latest('spent_at')->paginate(5);
+          // ===== 集計 =====
+          $totalExpense = Transaction::where('user_id', auth()->id())
+             ->where('type','expense')
+             ->sum('amount');
+
+          $totalIncome = Transaction::where('user_id', auth()->id())
+            ->where('type','income')
+            ->sum('amount');
+        /*$transactions = Transaction::with('category')
         ->where('user_id', auth()->id())
         ->latest('spent_at')
         ->get();
-        return view('transactions.index',compact('transactions'));
+        */
+        return view('transactions.index',compact(
+            'transactions',
+            'totalExpense',
+            'totalIncome'
+        ));
     }
 
     /**

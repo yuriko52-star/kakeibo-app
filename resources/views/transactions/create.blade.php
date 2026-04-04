@@ -22,7 +22,7 @@
 
             <div class="mb-4">
                 <label class="block mb-1 font-medium">種別</label>
-                <select name="type"class="w-full border rounded px-3 py-2">
+                <select name="type" id="type" class="w-full border rounded px-3 py-2">
                     <option value="">選択してください</option>
                     <option value="income" {{ old('type') === 'income' ? 'selected' : '' }}>収入</option>
                     <option value="expense" {{ old('type') === 'expense' ? 'selected' : '' }}>支出</option>
@@ -36,11 +36,12 @@
 
             <div class="mb-4">
                 <label class="block mb-1 font-medium">カテゴリ</label>
-                <select name="category_id" class="w-full border rounded px-3 py-2">
+                <select name="category_id" id="category_id" class="w-full border rounded px-3 py-2">
                     <option value="">選択してください</option>
                     @foreach($categories as $category)
-                        <option value="{{ $category->id}}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
-                            {{ $category->name }} ({{ $category->type === 'income' ? '収入' : '支出' }})
+                        <option value="{{ $category->id}}"
+                        data-type="{{ $category->type }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
+                            {{ $category->name }} 
                         </option>
                     @endforeach
                 </select>
@@ -81,4 +82,40 @@
         </form>
     </div>
 </div>
+    <script>
+    console.log('読み込みOK');
+    document.addEventListener('DOMContentLoaded', function () {
+        const typeSelect = document.getElementById('type');
+        const categorySelect = document.getElementById('category_id');
+        const categoryOptions = categorySelect.querySelectorAll('option');
+
+        function filterCategories() {
+            const selectedType = typeSelect.value;
+            let hasVisibleSelected = false;
+
+            categoryOptions.forEach(option => {
+                const optionType = option.dataset.type;
+
+                if(option.value === '') {
+                    option.hidden = false;
+                    return;
+                }
+                if(selectedType === '') {
+                    option.hidden = true;
+                } else {
+                    option.hidden = optionType !== selectedType;
+                }
+                if(!option.hidden && option.selected) {
+                    hasVisibleSelected = true;
+                }
+            });
+            if(!hasVisibleSelected) {
+                categorySelect.value = '';
+            }
+        }
+        filterCategories();
+
+        typeSelect.addEventListener('change',filterCategories);
+    });
+    </script>
 </x-app-layout>

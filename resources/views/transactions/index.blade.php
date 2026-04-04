@@ -8,6 +8,35 @@
         </div>
             
     </x-slot>
+<div class="flex justify-between items-center">
+    <div class="flex mt-4 mx-auto items-center">
+    
+    <form action="{{route('transactions.index')}}" class="mb-6 flex gap-4" method="GET">
+        <select name="type" id="" class="text-gray-500 border text-left rounded px-8 py-2">
+            <option value="" class="">すべて</option>
+            <option value="income" {{request('type')=== 'income' ? 'selected' : '' }}>収入</option>
+            <option value="expense" {{request('type')=== 'expense' ? 'selected' : '' }}>支出</option>
+        </select>
+
+        <input type="number" name="month" min="1" max="12" 
+        value="{{ request('month') }}"
+        placeholder="月（1～12)" class="border rounded px-3 py-2 w-32">
+        <button class="bg-blue-500 text-white px-4 py-2 rounded">検索
+        </button> 
+    </form>
+    </div>
+    <div class="flex mb-4 p-4 bg-gray-100 rounded mx-auto">
+        <p>収入合計:<span class="text-green-600 font-semibold">
+            {{ number_format($totalIncome) }}円
+        </span>
+        </p>
+        <p>支出合計:<span class="text-red-600 font-semibold">
+            {{ number_format($totalExpense) }}円
+        </span></p>
+        <p>差額:<span>{{ number_format($totalIncome - $totalExpense) }}円</span>
+        </p>
+    </div>    
+</div>
     <div class="py-8 max-w-4xl mx-auto px-4">
        @if(session('success'))
         <div class="mb-4 p-s bg-green-100 text-green-800 rounded">
@@ -40,7 +69,7 @@
                         <td class="px-4 py-3">{{
                             $transaction->type === 'income' ? '収入' : '支出' }}</td>
                         <td class="px-4 py-3">{{ $transaction->category->name }}</td>
-                        <td class="px-4 py-3">{{ number_format($transaction->amount) }}</td>
+                        <td class="px-4 py-3">{{ number_format($transaction->amount) }}円</td>
                         <td class="px-4 py-3">{{ $transaction->memo}}</td>
                         <td class="px-4 py-3 flex gap-3">
                             <a href="{{ route('transactions.edit', $transaction) }}" class="text-blue-600 hover:underline">編集</a>
