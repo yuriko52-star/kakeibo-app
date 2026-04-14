@@ -22,7 +22,7 @@
                     <select name="type"  class="w-full borer rounded px-3 py-2">
                         <option value="">選択してください</option>
                         <option value="income"{{ old('type')=== 'income' ? 'selected' : '' }}>収入</option>
-                        <option value="expense" {{ old('type') === 'expense' ? 'selected' : '' }}>支出</option>
+                        <option value="expense" {{ old('type') === 'expense' ? 'selected' : '' }} >支出</option>
                     </select>
                     @error('type')
                     <div class="text-red-500 text-sm mt-1">{{ $message }}</div>

@@ -12,11 +12,10 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categories = Category::where('user_id',auth()->id())
+       $categories = Category::where('user_id',auth()->id())
             ->latest()
-            ->paginate(5);
-            // 10にするかも
-            return view('categories.index',compact('categories'));
+            ->paginate(5); 
+        return view('categories.index',compact('categories'));    
     }
 
     /**
@@ -24,7 +23,7 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        return view('categories.create');
+       return view('categories.create');
     }
 
     /**
@@ -47,7 +46,7 @@ class CategoryController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Category $category)
+    /*public function show(Category $category)
     {
         abort(404);
     }
@@ -57,7 +56,7 @@ class CategoryController extends Controller
      */
     public function edit(Category $category)
     {
-        if($category->user_id !== auth()->id()) {
+       if($category->user_id !== auth()->id()) {
             abort(403);
         }
         return view('categories.edit',compact('category'));
@@ -72,7 +71,7 @@ class CategoryController extends Controller
             abort(403);
         }
         $request->validate([
-            'name'=> 'required|string|max:255',
+            'name' => 'required|string|max:255',
             'type' => 'required|in:income,expense',
         ]);
         $category->update([

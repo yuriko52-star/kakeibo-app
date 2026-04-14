@@ -9,7 +9,7 @@ class Transaction extends Model
 {
     use HasFactory;
 
-    protected $fillable= [
+    protected $fillable = [
         'user_id',
         'category_id',
         'type',
@@ -17,14 +17,12 @@ class Transaction extends Model
         'memo',
         'spent_at',
     ];
-
-    public function user()
-    {
-        return $this->belongsTo(User::class);
+    
+    public function user() {
+        return $this->belongsTo (User::class);
     }
-
     public function category()
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo (Category::class);
     }
 }

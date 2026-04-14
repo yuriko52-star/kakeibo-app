@@ -13,37 +13,35 @@ class TransactionController extends Controller
      */
     public function index(Request $request)
     {
-         // ログインユーザーのデータだけ
-         $query = Transaction::where('user_id',auth()->id());
-          // 種別で絞り込み
-          if($request->filled('type')) {
+        $query = Transaction::where('user_id', auth()->id());
+        if($request->filled('type')) {
             $query->where('type',$request->type);
-          }
-          // 月で絞り込み
-          if($request->filled('month')) {
-            $query->whereMonth('spent_at',$request->month);
-          }
-          // 取得（新しい順）
-          $transactions = $query->latest('spent_at')->paginate(5);
-          // ===== 集計 =====
-          $totalExpense = Transaction::where('user_id', auth()->id())
-             ->where('type','expense')
-             ->sum('amount');
+        }
+        if($request->filled('month')) {
+            $query->whereMonth('spent_at', $request->month);
+        }
+        $transactions = $query->latest('spent_at')->paginate(5);
+        $totalQuery = Transaction::where('user_id', auth()->id());
+        if($request->filled('month')) {
+            $totalQuery->whereMonth('spent_at',$request->month);
+        }
 
-          $totalIncome = Transaction::where('user_id', auth()->id())
-            ->where('type','income')
+        $totalExpense = (clone $totalQuery)
+            ->where('type','expense')
             ->sum('amount');
-        /*$transactions = Transaction::with('category')
-        ->where('user_id', auth()->id())
-        ->latest('spent_at')
-        ->get();
-        */
-        return view('transactions.index',compact(
-            'transactions',
-            'totalExpense',
-            'totalIncome'
-        ));
+        $totalIncome = (clone $totalQuery)
+            ->where('type', 'income')
+            ->sum('amount');
+        $balance = $totalIncome - $totalExpense;
+        
+          return view('transactions.index',compact(
+                'transactions',
+                'totalExpense',
+                'totalIncome',
+                'balance',
+            ));
     }
+
 
     /**
      *  登録画面　Show the form for creating a new resource.
@@ -51,10 +49,27 @@ class TransactionController extends Controller
     public function create()
     {
         $categories = Category::where('user_id', auth()->id())
-         ->orderBy('type')
+            ->orderByRaw("
+                CASE
+                WHEN type = 'expense' THEN 1
+                WHEN type = 'income' THEN 2
+                END
+                ")
+            ->orderBy('name')
+            ->get();
+            return view('transactions.create',compact('categories'));
+        /*$categories = Category::where('user_id',auth()->id())
+         ->orderByRaw("
+         CASE
+         WHEN type = 'expense' THEN 1
+         WHEN type = 'income' THEN 2
+         END
+         ")
+        //  expense を先income を後に固定する
          ->orderBy('name')
          ->get();
-         return view('transactions.create', compact('categories'));
+         */
+         
     }
 
     /**
@@ -62,51 +77,50 @@ class TransactionController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+       $request->validate([
             'type' => 'required|in:income,expense',
             'category_id' => 'required|exists:categories,id',
             'amount' => 'required|integer|min:1',
             'memo' => 'nullable|string|max:255',
             'spent_at' => 'required|date',
-        ],[
+       ],[
             'amount.integer' => '数値で入力してください',
             'amount.min' => '1以上の数字で入力してください',
-        ]);
-        $category = Category::findOrFail($request->category_id);
-        // 他人のカテゴリを使えないようにする
+       ]);
+        
+       $category = Category::findOrFail($request->category_id);
+         // チェック1.他人のカテゴリを使えないようにする
         if($category->user_id !== auth()->id()) {
             abort(403);
         }
-
-        // カテゴリの種別と取引の種別が一致しているか
+         // チェック2. カテゴリの種別と取引の種別が一致しているか
         if($category->type !== $request->type) {
             return back()->withErrors([
-                'category_id' => 'カテゴリの種別と取引の種別が一致していません。'
+                'category_id' => 'カテゴリの種類と取引の種類が一致していません',
             ])->withInput();
         }
-
         Transaction::create([
             'user_id' => auth()->id(),
             'category_id' => $request->category_id,
-            'type' => $request->type,
+            'type' =>$request->type,
             'amount' => $request->amount,
             'memo' => $request->memo,
             'spent_at' => $request->spent_at,
         ]);
-        return redirect()->route('transactions.index')->with('success','取引を登録しました。');
+        return redirect()->route('transactions.index')->with('success','取引を登録しました');
+        
     }
 
     /**
      * 詳細画面　Display the specified resource.
      */
-    public function show(Transaction $transaction)
+    /*public function show(Transaction $transaction)
     {
         if($transaction->user_id !== auth()->id()) {
             abort(403);
         }
-        return view('transactions.show',compact('transaction'));
+        return view('')
     }
-
     /**
      * 編集画面　Show the form for editing the specified resource.
      */
@@ -115,11 +129,25 @@ class TransactionController extends Controller
         if($transaction->user_id !== auth()->id()) {
             abort(403);
         }
-        $categories = Category::where('user_id', auth()->id())
-            ->orderBy('type')
+        $categories = Category::where('user_id',auth()->id())
+        ->orderByRaw("
+        CASE
+        WHEN type = 'expense' THEN 1
+        WHEN type = 'income' THEN 2
+        END")
+        ->orderBy('name')
+        ->get();
+        return view('transactions.edit',compact('transaction', 'categories'));
+        /*$categories = Category::where('user_id', auth()->id())
+            ->orderByRaw("
+            CASE
+            WHEN type = 'expense' THEN 1
+            WHEN type = 'income' THEN 2
+            END")
             ->orderBy('name')
             ->get();
-            return view('transactions.edit',compact('transaction','categories'));
+        */
+            
     }
 
     /**
@@ -136,30 +164,30 @@ class TransactionController extends Controller
             'amount' => 'required|integer|min:1',
             'memo' => 'nullable|string|max:255',
             'spent_at' => 'required|date',
-        ],[
+       ],[
             'amount.integer' => '数値で入力してください',
             'amount.min' => '1以上の数字で入力してください',
         ]);
         $category = Category::findOrFail($request->category_id);
-
-        // 他人のカテゴリを使えないようにする
         if($category->user_id !== auth()->id()) {
             abort(403);
         }
-        // カテゴリ種別と取引種別の一致確認
-        if($category->type !== $request->type) {
-            return back()->withErrors([
-                'category_id' => 'カテゴリの種別と取引の種別が一致していません。'
-            ])->withInput();
-        }
-        $transaction->update([
+            // ↑　他人のカテゴリを使えないようにする
+        if($category->type !== $request->type)
+            {
+                return back()->withErrors([
+                    'category_id' => 'カテゴリの種別と取引の種類が一致していません',
+                ])->withInput();
+            }
+          // ↑　カテゴリ種別と取引種別の一致確認
+          $transaction->update([
             'category_id' => $request->category_id,
             'type' => $request->type,
             'amount' => $request->amount,
             'memo' => $request->memo,
             'spent_at' => $request->spent_at,
-        ]);
-        return redirect()->route('transactions.index')->with('success','取引を更新しました。');
+          ]);
+          return redirect()->route('transactions.index')->with('success','取引を更新しました'); 
     }
 
     /**
@@ -167,11 +195,12 @@ class TransactionController extends Controller
      */
     public function destroy(Transaction $transaction)
     {
-        if($transaction->user_id !== 
-            auth()->id()) {
-            abort(403);
+       if($transaction->user_id !== auth()->id()) {
+        abort(403);
         }
+        // dd(request()->method(), request()->all());
         $transaction->delete();
-        return redirect()->route('transactions.index')->with('success','取引を削除しました。');
+        
+        return redirect()->route('transactions.index')->with('success','取引を削除しました'); 
     }
 }

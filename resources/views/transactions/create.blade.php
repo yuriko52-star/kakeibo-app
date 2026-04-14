@@ -14,41 +14,40 @@
             @csrf
             <div class="mb-4">
                 <label class="block mb-1 font-medium">日付</label>
-                <input type="date" name="spent_at" value="{{ old('spent_at', date('Y-m-d')) }}" class="w-full border rounded px-3 py-2">
-                @error('spent_at')
-                    <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
-                @enderror
+                <input type="date" name="spent_at" value="{{ old('spent_at',date('Y-m-d')) }}" class="w-full border rounded px-3 py-2">
+                    @error('spent_at')
+                    <div class="text-red-500 text-sm mt-1">{{$message}}</div>
+                    @enderror
             </div>
 
             <div class="mb-4">
                 <label class="block mb-1 font-medium">種別</label>
-                <select name="type" id="type" class="w-full border rounded px-3 py-2">
+                <select name="type"  class="w-full border rounded px-3 py-2">
                     <option value="">選択してください</option>
-                    <option value="income" {{ old('type') === 'income' ? 'selected' : '' }}>収入</option>
-                    <option value="expense" {{ old('type') === 'expense' ? 'selected' : '' }}>支出</option>
+                    <option value="income" {{ old('type') === 'income' ? 'selected' : '' }} >収入</option>
+                    <option value="expense" {{ old('type') === 'expense' ? 'selected' : '' }}  >支出</option>
                 </select>
                 @error('type')
                 <div class="text-red-500 text-sm mt-1">
-                    {{ $message }}
+                  {{$message}}  
                 </div>
                 @enderror
             </div>
 
             <div class="mb-4">
                 <label class="block mb-1 font-medium">カテゴリ</label>
-                <select name="category_id" id="category_id" class="w-full border rounded px-3 py-2">
+                <select name="category_id"  class="w-full border rounded px-3 py-2">
                     <option value="">選択してください</option>
                     @foreach($categories as $category)
-                        <option value="{{ $category->id}}"
-                        data-type="{{ $category->type }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
-                            {{ $category->name }} 
+                        <option value="{{ $category->id}}"data-type="{{ $category->name}}"{{ old('category_id') == $category->id ? 'selected' : '' }}>
+                          {{ $category->name }} ({{ $category->type === 'income' ? '収入' : '支出' }})
                         </option>
                     @endforeach
                 </select>
-                @error('category_id')
-                    <div class="text-red-500 text-sm mt-1">{{ $message }}
-                    </div>
-                @enderror
+                    @error('category_id')
+                    <div class="text-red-500 text-sm mt-1">
+                    {{$message}}</div>
+                    @enderror
             </div>
 
             <div class="mb-4">
@@ -56,7 +55,7 @@
                 <input type="number" name="amount" value="{{ old('amount') }}" class="w-full border rounded px-3 py-2">
                 @error('amount')
                     <div class="text-red-500 text-sm mt-1">
-                        {{ $message }}
+                     {{ $message }}    
                     </div>
                 @enderror
             </div>
@@ -64,11 +63,12 @@
             <div class="mb-4">
                 <label class="block mb-1 font-medium">メモ</label>
                 <input type="text" name="memo" value="{{ old('memo') }}" class="w-full border rounded px-3 py-2">
-                @error('memo')
+                    @error('memo')
                     <div class="text-red-500 text-sm mt-1">
-                    {{ $message }}
+                    {{$message}}
                     </div>
-                @enderror
+                    @enderror
+                
             </div>
 
             <div class="flex gap-3">
@@ -82,40 +82,5 @@
         </form>
     </div>
 </div>
-    <script>
-    console.log('読み込みOK');
-    document.addEventListener('DOMContentLoaded', function () {
-        const typeSelect = document.getElementById('type');
-        const categorySelect = document.getElementById('category_id');
-        const categoryOptions = categorySelect.querySelectorAll('option');
-
-        function filterCategories() {
-            const selectedType = typeSelect.value;
-            let hasVisibleSelected = false;
-
-            categoryOptions.forEach(option => {
-                const optionType = option.dataset.type;
-
-                if(option.value === '') {
-                    option.hidden = false;
-                    return;
-                }
-                if(selectedType === '') {
-                    option.hidden = true;
-                } else {
-                    option.hidden = optionType !== selectedType;
-                }
-                if(!option.hidden && option.selected) {
-                    hasVisibleSelected = true;
-                }
-            });
-            if(!hasVisibleSelected) {
-                categorySelect.value = '';
-            }
-        }
-        filterCategories();
-
-        typeSelect.addEventListener('change',filterCategories);
-    });
-    </script>
+    
 </x-app-layout>
