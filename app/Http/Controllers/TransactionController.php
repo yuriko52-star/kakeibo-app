@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Transaction;
 use App\Models\Category;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 class TransactionController extends Controller
@@ -26,6 +27,13 @@ class TransactionController extends Controller
             $totalQuery->whereMonth('spent_at',$request->month);
         }
 
+        $categoryTotals = (clone $totalQuery)
+            ->where('type', 'expense')
+            ->select('category_id', DB::raw('SUM(amount) as total'))
+            ->groupBy('category_id')
+            ->with('category')
+            ->get();
+
         $totalExpense = (clone $totalQuery)
             ->where('type','expense')
             ->sum('amount');
@@ -35,6 +43,7 @@ class TransactionController extends Controller
         $balance = $totalIncome - $totalExpense;
         
           return view('transactions.index',compact(
+                'categoryTotals',
                 'transactions',
                 'totalExpense',
                 'totalIncome',
