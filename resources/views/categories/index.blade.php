@@ -21,30 +21,30 @@
             </a>
         </div>
 
-        <div class="bg-white shadow rounded p-4">
-            <table class="w-full border-collapse">
+        <div class="max-w-xl mx-auto bg-white shadow rounded p-4 overflow-hidden">
+            <table class= "w-full border-collapse">
                 <thead>
                     <tr class="border-b">
-                        <th class="text-left py-2">名前</th>
-                        <th class="text-left py-2">種別</th>
-                        <th class="text-left py-2">操作</th>
+                        <th class="text-left py-3 px-4">名前</th>
+                        <th class="text-left py-3 px-4 md:px-10">種別</th>
+                        <th class="text-left py-3 px-10">操作</th>
                     </tr>
                 </thead>
                 <tbody>
                    
                 @forelse($categories as $category)    
                     <tr class="border-b">
-                        <td class="py-2">{{ $category->name}}</td>
-                        <td class="py-2">
+                        <td class="px-4 py-3">{{ $category->name}}</td>
+                        <td class="md:px-10 px-4 py-3">
                         {{ $category->type === 'income' ? '収入' : '支出' }}    
                         </td>
                         
-                        <td class="py-2 flex gap-2">
-                            <a href="{{ route('categories.edit', $category) }}" class="text-blue-600 hover:underline">編集</a>
+                        <td class="py-3 px-4 flex gap-2">
+                            <a href="{{ route('categories.edit', $category) }}" class="text-blue-600  text-right hover:underline">編集</a>
                             <form action="{{ route('categories.destroy',$category) }}" method="POST" onsubmit="return confirm('削除してもよろしいですか?');">
                             @csrf   
                             @method('DELETE')    
-                                <button type="submit"class="text-red-600 hover:underline">
+                                <button type="submit"class="text-red-600 hover:underline pl-2">
                                     削除
                                 </button>
                             </form>
@@ -60,7 +60,7 @@
                 @endforelse   
                 </tbody>
             </table>
-            <div class="mt-4">
+            <div class="mt-4 flex justify-center px-0">
                <!-- ページネーション -->
             {{ $categories->links() }}   
             </div>

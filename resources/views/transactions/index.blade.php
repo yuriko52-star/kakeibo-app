@@ -131,10 +131,10 @@
                     @endforelse
                 </tbody>
             </table>
-            <!-- ページネーション -->
-            <div class="mt-4">
-               {{ $transactions->links()}} 
-            </div>
+        </div>
+        <!-- ページネーション -->
+        <div class="mt-4">
+            {{ $transactions->links()}} 
         </div>
     </div>   
 </x-app-layout>
