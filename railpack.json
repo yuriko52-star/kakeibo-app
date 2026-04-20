@@ -1,7 +1,0 @@
-{
-  "providers": {
-    "php": {
-      "phpServer": false
-    }
-  }
-}
