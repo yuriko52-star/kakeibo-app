@@ -20,11 +20,16 @@ class TransactionController extends Controller
         }
         if($request->filled('month')) {
             $query->whereMonth('spent_at', $request->month);
+        } else {
+            $query->whereMonth('spent_at', now()->month);
         }
+
         $transactions = $query->latest('spent_at')->paginate(5);
         $totalQuery = Transaction::where('user_id', auth()->id());
         if($request->filled('month')) {
             $totalQuery->whereMonth('spent_at',$request->month);
+        } else {
+            $totalQuery->whereMonth('spent_at', now()->month);
         }
 
         $categoryTotals = (clone $totalQuery)

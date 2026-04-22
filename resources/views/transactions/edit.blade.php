@@ -58,7 +58,7 @@
                 <input type="number" name="amount" value="{{ old('amount', $transaction->amount) }}" class="w-full border rounded px-3 py-2">
                 @error('amount')
                     <div class="text-red-500 text-sm mt-1">
-                        {{ $nessage }}         
+                        {{ $message }}         
                     </div>
                 @enderror
             </div>
