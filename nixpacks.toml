@@ -12,3 +12,4 @@ cmds = [
 ]
 [variables]
 NIXPACKS_PHP_ROOT_DIR = "public"
+PORT = "8080"
