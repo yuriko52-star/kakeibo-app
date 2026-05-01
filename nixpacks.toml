@@ -11,5 +11,3 @@ cmds = [
   "php artisan db:seed --force"
 ]
 
-[start]
-cmd = "php -S 0.0.0.0:$PORT -t public"
