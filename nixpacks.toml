@@ -1,5 +1,5 @@
 [phases.setup]
-nixPkgs = ["php", "nodejs"]
+nixPkgs = ["nodejs"]
 
 [phases.build]
 cmds = [
@@ -10,4 +10,5 @@ cmds = [
   "php artisan migrate --force",
   "php artisan db:seed --force"
 ]
-
+[variables]
+NIXPACKS_PHP_ROOT_DIR = "public"
