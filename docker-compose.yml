@@ -3,7 +3,7 @@ services:
     build: .
     container_name: laravel_app
     volumes:
-      - ./src:/var/www
+      - ./src:/var/www/
     ports:
       - "8000:8000"
     depends_on:
@@ -16,5 +16,12 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: kakeibo
+      MYSQL_CHARACTER_SET_SERVER: utf8mb4
+      MYSQL_COLLATION_SERVER: utf8mb4_unicode_ci
     ports:
       - "3306:3306"
+    volumes:
+      - db-data:/var/lib/mysql
+
+volumes:
+  db-data:
