@@ -11,6 +11,7 @@ services:
 
   db:
     image: mysql:8.0
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     container_name: mysql_db
     restart: always
     environment:
@@ -22,6 +23,18 @@ services:
       - "3306:3306"
     volumes:
       - db-data:/var/lib/mysql
+  phpmyadmin:   # ← ★ここを追加
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: root
+    depends_on:
+      - db
 
 volumes:
   db-data:

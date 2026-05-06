@@ -79,10 +79,10 @@
                     <div class="flex gap-4 mt-2">
                         <a href="{{ route('transactions.edit', $transaction) }}" class="text-blue-600">編集</a>
 
-                        <form action="{{ route('transactions.destroy',$transaction) }}" method="POST" >
+                        <form action="{{ route('transactions.destroy',$transaction) }}" method="POST"  onsubmit="return confirm('削除してもよろしいですか?');"  >
                             @csrf
-                            @method('DELETE')onsubmit="return confirm('削除してもよろしいですか?');"
-                            <button type="submit" class="text-red-600">削除</button>
+                            @method('DELETE')
+                            <button type="submit"class="text-red-600">削除</button>
                         </form>
                     </div>
                 </div>

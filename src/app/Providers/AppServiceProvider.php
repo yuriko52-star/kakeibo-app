@@ -19,7 +19,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        DB::statement("SET NAMES utf8mb4");
+        // DB::statement("SET NAMES utf8mb4");
 
     }
 }
