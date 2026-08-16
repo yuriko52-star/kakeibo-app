@@ -13,7 +13,7 @@ services:
     image: mysql:8.0
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     container_name: mysql_db
-    restart: always
+    restart: "no"
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: kakeibo
@@ -23,7 +23,7 @@ services:
       - "3306:3306"
     volumes:
       - db-data:/var/lib/mysql
-  phpmyadmin:   # ← ★ここを追加
+  phpmyadmin: # ← ★ここを追加
     image: phpmyadmin/phpmyadmin
     container_name: phpmyadmin
     ports:

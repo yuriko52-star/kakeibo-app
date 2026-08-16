@@ -6,7 +6,9 @@
                 取引一覧へ
             </a>
         </div>
-        
+        <div class="bg-red-500 text-white text-3xl p-10">
+    Tailwind TEST
+</div>
     </x-slot>
 
     <div class="py-8 max-w-4xl mx-auto px-4">
